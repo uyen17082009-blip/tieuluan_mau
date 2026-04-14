@@ -1,126 +1,164 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Header.css';
 import logoImage from '../../img/logo.png';
 
 const Header = () => {
-  const [currentLang, setCurrentLang] = useState('VN');
-  const [cartCount, setCartCount] = useState(0);
-  const [currentUser, setCurrentUser] = useState(null);
-  const navigate = useNavigate();
+    const [hoveredMenu, setHoveredMenu] = useState(null);
+    const [cartCount, setCartCount] = useState(0);
+    const [currentUser, setCurrentUser] = useState(null);
+    const navigate = useNavigate();
 
-  const trans = {
-    VN: {
-      freeShip: "Miễn phí giao hàng đơn từ 500k",
-      search: "Tìm kiếm mỹ phẩm...",
-      login: "Đăng nhập",
-      hello: "Chào",
-      cart: "Giỏ hàng",
-      menu: ["TRANG CHỦ", "CHĂM SÓC DA", "CHĂM SÓC TÓC", "TRANG ĐIỂM", "SẢN PHẨM MỚI", "KHUYẾN MÃI"],
-      skincareSub: ["Sữa Rửa Mặt", "Serum & Đặc Trị", "Kem Dưỡng Ẩm", "Mặt Nạ"]
-    },
-    EN: {
-      freeShip: "Free shipping on orders over 500k",
-      search: "Search products...",
-      login: "Login",
-      hello: "Hi",
-      cart: "Cart",
-      menu: ["HOME", "SKINCARE", "HAIRCARE", "MAKEUP", "NEW ARRIVALS", "PROMOTIONS"],
-      skincareSub: ["Cleanser", "Serum & Treatment", "Moisturizer", "Mask"]
-    }
-  };
+    // Lấy số lượng món trong giỏ hàng (tổng quantity) và thông tin user
+    useEffect(() => {
+        const updateCartCount = () => {
+            const savedCart = localStorage.getItem('cart');
+            if (!savedCart) {
+                setCartCount(0);
+            } else {
+                try {
+                    const cart = JSON.parse(savedCart);
+                    const totalItems = cart.reduce(
+                        (sum, item) => sum + (item.quantity || 0),
+                        0
+                    );
+                    setCartCount(totalItems);
+                } catch (error) {
+                    console.error('Lỗi đọc giỏ hàng:', error);
+                    setCartCount(0);
+                }
+            }
+        };
 
-  const syncStore = useCallback(() => {
-    const savedCart = localStorage.getItem('cart');
-    setCartCount(savedCart ? JSON.parse(savedCart).reduce((sum, item) => sum + (item.quantity || 0), 0) : 0);
-    const savedUser = localStorage.getItem('currentUser');
-    setCurrentUser(savedUser ? JSON.parse(savedUser) : null);
-  }, []);
+        const updateCurrentUser = () => {
+            const savedUser = localStorage.getItem('currentUser');
+            if (!savedUser) {
+                setCurrentUser(null);
+                return;
+            }
 
-  const handleLangChange = (lang) => {
-    setCurrentLang(lang);
-    const event = new CustomEvent('languageChange', { detail: lang });
-    window.dispatchEvent(event);
-  };
+            try {
+                const user = JSON.parse(savedUser);
+                setCurrentUser(user);
+            } catch (error) {
+                console.error('Lỗi đọc thông tin người dùng:', error);
+                setCurrentUser(null);
+            }
+        };
 
-  useEffect(() => {
-    syncStore();
-    window.addEventListener('storage', syncStore);
-    return () => window.removeEventListener('storage', syncStore);
-  }, [syncStore]);
+        // Cập nhật ngay khi load trang
+        updateCartCount();
+        updateCurrentUser();
 
-  const currentData = trans[currentLang];
+        // Lắng nghe khi giỏ hàng hoặc user được cập nhật
+        window.addEventListener('cartUpdated', updateCartCount);
+        window.addEventListener('userUpdated', updateCurrentUser);
+        window.addEventListener('storage', () => {
+            updateCartCount();
+            updateCurrentUser();
+        });
 
-  return (
-    <header className="aline-header">
-      <div className="header-top-bar">
-        <div className="header-container">
-          <div className="top-bar-left">
-            <span>{currentData.freeShip}</span>
-            <span className="divider">|</span>
-            <i className="fa-solid fa-phone"></i> 1800 1708
-          </div>
-          <div className="top-bar-right">
-            <div className="language-picker">
-              <span className={`lang-btn ${currentLang === 'VN' ? 'active' : ''}`} onClick={() => handleLangChange('VN')}>VN</span>
-              <span className="divider">|</span>
-              <span className={`lang-btn ${currentLang === 'EN' ? 'active' : ''}`} onClick={() => handleLangChange('EN')}>EN</span>
+        return () => {
+            window.removeEventListener('cartUpdated', updateCartCount);
+            window.removeEventListener('userUpdated', updateCurrentUser);
+            window.removeEventListener('storage', () => {
+                updateCartCount();
+                updateCurrentUser();
+            });
+        };
+    }, []);
+
+    // Dropdown menu items
+    const coffeeMenuItems = [
+        { text: 'Hành trình tách cà phê đậm', href: '/coffee/hanh-trinh-tach-ca-phe' },
+        { text: 'Hạt cà phê Phúc Long', href: '/coffee/hat-ca-phe-phuc-long' },
+        { text: 'Nghệ thuật pha chế', href: '/coffee/nghe-thuat-pha-che' }
+    ];
+
+    return (
+        <header className="phuclong-header">
+            {/* Top Section: Header Bar */}
+            <div className="header-top-bar">
+                <div className="header-top-content">
+                    {/* Left: Free Delivery Info */}<div className="header-delivery-info">
+                        <span className="delivery-text">Free Delivery</span>
+                        <i className="fas fa-phone delivery-icon"></i>
+                        <span className="delivery-phone">0965441669</span>
+                        <div className="delivery-scooter">
+                            <i className="fas fa-motorcycle"></i>
+                        </div>
+                    </div>
+
+                    {/* Center: Logo */}
+                    <div className="header-logo-container">
+                        <div className="phuclong-logo">
+                            <img src={logoImage} alt="Logo" className="header-logo-image" />
+                        </div>
+                    </div>
+
+                    {/* Right: User Actions */}
+                    <div className="header-user-actions">
+                        <button
+                            className="login-link"
+                            onClick={() => navigate('/login')}
+                        >
+                            {currentUser ? (currentUser.name || currentUser.user) : 'Đăng nhập'}
+                        </button>
+                        <span className="action-separator">|</span>
+                        <div className="language-selector">
+                            <span className="lang-active">VN</span>
+                            <span className="lang-separator">|</span>
+                            <span className="lang-option">EN</span>
+                        </div>
+                        <button
+                            className="cart-button"
+                            onClick={() => navigate('/cart')}
+                        >
+                            <i className="fas fa-shopping-cart"></i>
+                            <span>Giỏ hàng</span>
+                            <span className="cart-badge">{cartCount}</span>
+                        </button>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
 
-      <div className="header-main">
-        <div className="header-container">
-          <div className="header-logo" onClick={() => navigate('/')}>
-            <img src={logoImage} alt="Aline Beauty" />
-          </div>
-          <div className="header-search">
-            <input type="text" placeholder={currentData.search} />
-            <button><i className="fa-solid fa-magnifying-glass"></i></button>
-          </div>
-          <div className="header-actions">
-            <div className="action-item">
-              <i className="fa-regular fa-circle-user purple-icon"></i>
-              {currentUser ? (
-                <span className="action-label">{currentData.hello}, {currentUser.name || 'User'}</span>
-              ) : (
-                <Link to="/login" className="action-label">{currentData.login}</Link>
-              )}
-            </div>
-            <Link to="/cart" className="action-item header-cart">
-              <div className="cart-icon-wrapper">
-                <i className="fa-solid fa-basket-shopping purple-icon"></i>
-                <span className="cart-badge">{cartCount}</span>
-              </div>
-              <span className="action-label">{currentData.cart}</span>
-            </Link>
-          </div>
-        </div>
-      </div>
+            {/* Bottom Section: Navigation Bar */}
+            <nav className="header-navigation">
+                <div className="nav-content">
+                    <a href="/" className="nav-link">TRANG CHỦ</a>
+                    
+                    {/* CÀ PHÊ với Dropdown */}
+                    <div 
+                        className="nav-item-with-dropdown"
+                        onMouseEnter={() => setHoveredMenu('coffee')}
+                        onMouseLeave={() => setHoveredMenu(null)}
+                    >
+                        <a href="/coffee" className={`nav-link ${hoveredMenu === 'coffee' ? 'active' : ''}`}>
+                            SÁCH CŨ
+                        </a>
+                        {hoveredMenu === 'coffee' && (
+                            <div className="dropdown-menu">
+                                {coffeeMenuItems.map((item, index) => (
+                                    <akey={index} 
+                                        href={item.href} 
+                                        className="dropdown-item"
+                                    >
+                                        {item.text}
+                                    </a>
+                                ))}
+                            </div>
+                        )}
+                    </div>
 
-      <nav className="header-nav">
-        <div className="header-container">
-          <ul className="nav-list">
-            {currentData.menu.map((text, index) => (
-              <li key={index} className="nav-item">
-                <Link to="/" className="nav-link">
-                  {text} {index === 1 && <i className="fa-solid fa-chevron-down arrow-icon"></i>}
-                </Link>
-                {index === 1 && (
-                  <ul className="submenu">
-                    {currentData.skincareSub.map((sub, i) => (
-                      <li key={i}><Link to="/">{sub}</Link></li>
-                    ))}
-                  </ul>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </nav>
-    </header>
-  );
+                    <a href="/tea" className="nav-link">SÁCH BÁN CHẠY</a>
+                    <a href="/drinks" className="nav-link">FLASH SALE</a>
+                    <a href="/products" className="nav-link">SẢN PHẨM</a>
+                    <a href="/promotions" className="nav-link">KHUYẾN MÃI</a>
+                    <a href="/about" className="nav-link">VỀ CHÚNG TÔI</a>
+                </div>
+            </nav>
+        </header>
+    );
 };
 
 export default Header;
