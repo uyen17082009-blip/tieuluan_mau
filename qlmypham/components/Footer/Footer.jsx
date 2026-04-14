@@ -1,101 +1,101 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import './Footer.css';
-import logoImage from '../../img/logo.png';
+import logo from '../../img/logo.png';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const Footer = () => {
-  const [lang, setLang] = useState('VN');
+    return (
+        <footer className="highlands-footer">
+            {/* Green strip at the top */}
+            <div className="footer-green-strip"></div>
 
-  const trans = {
-    VN: {
-      about: "Về Aline Beauty",
-      links: ["Nguồn gốc thương hiệu", "Dịch vụ khách hàng", "Cơ hội nghề nghiệp", "Liên hệ hỗ trợ"],
-      stores: "Hệ thống cửa hàng",
-      findStore: "Tìm cửa hàng gần bạn",
-      policy: "Chính sách đổi trả",
-      follow: "KẾT NỐI VỚI CHÚNG TÔI",
-      mapBtn: "Xem trên Google Maps",
-      copyright: <>©2026 Aline Beauty. <br/> Tận tâm chăm sóc vẻ đẹp Việt. <br/> All rights reserved.</>
-    },
-    EN: {
-      about: "About Aline Beauty",
-      links: ["Brand Origin", "Customer Services", "Careers", "Contact Support"],
-      stores: "Store System",
-      findStore: "Find a store near you",
-      policy: "Return Policy",
-      follow: "FOLLOW US",
-      mapBtn: "View on Google Maps",
-      copyright: <>©2026 Aline Beauty. <br/> Dedicated to Vietnamese beauty. <br/> All rights reserved.</>
-    }
-  };
+            <div className="footer-content">
+                {/* Left Section: Logo and Copyright */}
+                <div className="footer-left">
+                    <div className="footer-logo">
+                        <img src={logo} alt="Highlands Coffee" className="footer-logo-img" />
+                    </div>
+                    <p className="footer-copyright">
+                        ©2025 Galaxy Cafe. All rights reserved
+                    </p>
+                </div>
 
-  useEffect(() => {
-    const handleLangChange = (e) => setLang(e.detail);
-    window.addEventListener('languageChange', handleLangChange);
-    return () => window.removeEventListener('languageChange', handleLangChange);
-  }, []);
+                {/* Middle Section: Navigation Links */}
+                <div className="footer-middle">
+                    {/* Column 1: VỀ GALAXYCAFE */}
+                    <div className="footer-column">
+                        <h3 className="footer-column-title">VỀ GALAXYCAFE</h3>
+                        <ul className="footer-links">
+                            <li><a href="/origin">Nguồn gốc</a></li>
+                            <li><a href="/services">Dịch vụ</a></li>
+                            <li><a href="/careers">Nghề Nghiệp</a></li>
+                            <li><a href="/contact">Liên hệ</a></li>
+                        </ul>
+                    </div>
 
-  const d = trans[lang];
+                    {/* Column 2: HỆ THỐNG CỬA HÀNG */}
+                    <div className="footer-column">
+                        <h3 className="footer-column-title">HỆ THỐNG CỬA HÀNG</h3>
+                        <ul className="footer-links">
+                            <li>
+                                <a href="/find-store">Tìm cửa hàng gần nhất</a>
+                            </li>
+                        </ul>
+                    </div>
 
-  return (
-    <footer className="aline-footer">
-      <div className="footer-purple-strip"></div>
-      <div className="footer-container">
-        <div className="footer-content">
-          <div className="footer-left">
-            <div className="footer-logo">
-              <img src={logoImage} alt="Logo" className='footer-logo-img' />
+                    {/* Column 3: TIN TỨC */}
+                    <div className="footer-column">
+                        <h3 className="footer-column-title">TIN TỨC</h3>
+                        <ul className="footer-links">
+                            {/* No sub-links visible in the image */}
+                        </ul>
+                    </div>
+                </div>
+
+                {/* Right Section: Social Media */}
+                <div className="footer-right">
+                    <h3 className="footer-column-title">THEO DÕI CHÚNG TÔI</h3>
+                    <div className="footer-social-icons">
+                        <a href="https://facebook.com" className="social-icon" aria-label="Facebook">
+                            <i className="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://instagram.com" className="social-icon" aria-label="Instagram">
+                            <i className="fab fa-instagram"></i>
+                        </a><a href="https://youtube.com" className="social-icon" aria-label="YouTube">
+                            <i className="fab fa-youtube"></i>
+                        </a>
+                        <a href="https://tiktok.com" className="social-icon" aria-label="TikTok">
+                            <i className="fab fa-tiktok"></i>
+                        </a>
+                    </div>
+
+                    <div className="footer-map">
+                        <iframe
+                            title="Bản đồ địa điểm Galaxy Cafe"
+                            className="footer-map_iframe"
+                            src="https://www.google.com/maps?q=10.743902,106.6340446&z=17&output=embed&hl=vi"
+                            loading="lazy"
+                            referrerPolicy="no-referrer-when-downgrade"
+                            allowFullScreen
+                        />
+                        <a 
+                            className="footer-map_link"
+                            href="https://maps.app.goo.gl/6RuUrqKaYFSpPe57"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                        >
+                            Mở trong Google Maps
+                        </a>
+                    </div>
+                </div>
             </div>
-            <p className="footer-copyright">{d.copyright}</p>
-          </div>
 
-          <div className="footer-middle">
-            <div className="footer-column">
-              <h3 className="footer-column-title">{d.about}</h3>
-              <ul className="footer-links">
-                <li><a href="/origin">{d.links[0]}</a></li>
-                <li><a href="/services">{d.links[1]}</a></li>
-                <li><a href="/careers">{d.links[2]}</a></li>
-                <li><a href="/contact">{d.links[3]}</a></li>
-              </ul>
+            {/* Chat Icon */}
+            <div className="footer-chat-icon" title="Chat với chúng tôi">
+                <i className="fas fa-comment-dots"></i>
             </div>
-            <div className="footer-column">
-              <h3 className="footer-column-title">{d.stores}</h3>
-              <ul className="footer-links">
-                <li><a href="/find-store">{d.findStore}</a></li>
-                <li><a href="/policy">{d.policy}</a></li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="footer-right">
-            <h3 className="footer-column-title">{d.follow}</h3>
-            <div className="footer-social-icons">
-              <a href="https://facebook.com" className='social-icon'><i className='fab fa-facebook-f'></i></a>
-              <a href="https://instagram.com" className='social-icon'><i className='fab fa-instagram'></i></a>
-              <a href="https://youtube.com" className='social-icon'><i className='fab fa-youtube'></i></a>
-              <a href="https://tiktok.com" className='social-icon'><i className='fab fa-tiktok'></i></a>
-            </div>
-            <div className="footer-map-container">
-              <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.460232428311!2d106.6974825!3d10.7760194!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f38557e03db%3A0x8d760d7019039050!2sVincom%20Center!5e0!3m2!1svi!2svn!4v1710000000000!5m2!1svi!2svn" 
-                width="100%" 
-                height="120" 
-                style={{ border: 0, borderRadius: "8px" }} 
-                allowFullScreen="" 
-                loading="lazy" 
-                referrerPolicy="no-referrer-when-downgrade"
-                title="Aline Beauty Map"
-              ></iframe>
-              <a className='footer-map-link' href="#" target="_blank" rel='noopener noreferrer'>
-                <i className="fas fa-location-dot"></i> {d.mapBtn}
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="footer-chat-button"><i className='fas fa-comment-dots'></i></div>
-    </footer>
-  );
+        </footer>
+    );
 };
 
 export default Footer;
